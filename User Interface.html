@@ -1,0 +1,328 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta charset="UTF-8">
+    <title>Lugha Link</title>
+    <style>
+        body {
+            font-family: 'Roboto', sans-serif;
+            background: url('background-collage.jpg') no-repeat center center fixed;
+            background-size: cover;
+            margin: 0;
+            padding: 0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            animation: colorChange 5s linear infinite alternate;
+        }
+
+        @keyframes colorChange {
+            0% {
+                background-color: #4285f4;
+            }
+            100% {
+                background-color: #f44336;
+            }
+        }
+
+        #translate-container {
+            width: 400px;
+            background-color: rgba(255, 255, 255, 0.9);
+            box-shadow: 0px 4px 12px rgba(0, 0, 0, 0.2);
+            border-radius: 10px;
+            padding: 20px;
+            text-align: center;
+            animation: fadeIn 1s;
+        }
+
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+            }
+            to {
+                opacity: 1;
+            }
+        }
+
+        h1 {
+            color: #4285f4;
+            font-size: 28px;
+            margin-bottom: 20px;
+        }
+
+        #source-text {
+            width: 100%;
+            padding: 10px;
+            font-size: 18px;
+            background-color: #fff;
+            border: none;
+            border-radius: 5px;
+            margin-top: 20px;
+            transition: background-color 0.3s;
+        }
+
+        #source-text:focus {
+            background-color: #f7f7f7;
+        }
+
+        #translate-button {
+            display: block;
+            width: 100%;
+            padding: 12px;
+            font-size: 18px;
+            background-color: #4285f4;
+            color: #fff;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            margin-top: 20px;
+            transition: background-color 0.3s;
+        }
+        #speech-button {
+            display: block;
+            width: 100%;
+            padding: 12px;
+            font-size: 18px;
+            background-color: #4285f4;
+            color: #fff;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            margin-top: 20px;
+            transition: background-color 0.3s;
+        }
+
+        #speak-button {
+            display: block;
+            width: 100%;
+            padding: 12px;
+            font-size: 18px;
+            background-color: #4285f4;
+            color: #fff;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            margin-top: 20px;
+            transition: background-color 0.3s;
+        }
+
+
+       
+        #speech-button:hover {
+            background-color: #357ae8;
+            transform: scale(1.05);
+        }
+
+        #speak-button:hover {
+            background-color: #357ae8;
+            transform: scale(1.05);
+        }    
+
+        #translate-button:hover {
+            background-color: #357ae8;
+            transform: scale(1.05);
+        }
+
+       
+
+         #results-container {
+            background-color: rgba(255, 255, 255, 0.9);
+            border: 1px solid #ccc;
+            border-radius: 5px;
+            padding: 20px;
+            margin-top: 20px;
+            animation: fadeIn 1s;
+        }
+
+        #translated-text {
+            width: 100%;
+            padding: 10px;
+            font-size: 18px;
+            background-color: #fff;
+            border: none;
+            border-radius: 5px;
+            margin-top: 20px;
+            transition: background-color 0.3s;
+        }
+
+        #translated-text:focus {
+            background-color: #f7f7f7;
+        }
+
+        /* Styling for the rolling text */
+        #rolling-text-container {
+            display: inline-block;
+            position: relative;
+        }
+
+        #rolling-text {
+            font-size: 32px;
+            font-weight: bold;
+            color: #fff;
+            background: linear-gradient(135deg, #4285f4, #0F9D58, #F4B400, #DB4437);
+            background-clip: text;
+            -webkit-background-clip: text;
+            color: transparent;
+            animation: roll 4s linear infinite alternate;
+        }
+        #microphone-status {
+            font-size: 18px;
+            font-weight: bold;
+            color: #4285f4;
+            text-align: center;
+            margin-top: 20px;
+            padding: 10px;
+            background-color: #f5f5f5;
+            border-radius: 5px;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+            animation: pulse 2s infinite;
+        }
+
+        @keyframes pulse {
+            0% {
+                transform: scale(1);
+            }
+            50% {
+                transform: scale(1.05);
+            }
+            100% {
+                transform: scale(1);
+            }
+        }
+    
+
+        @keyframes roll {
+            0% {
+                transform: translateY(0) rotate(0deg);
+            }
+            100% {
+                transform: translateY(-5px) rotate(3deg);
+            }
+        }
+    </style>
+</head>
+<body>
+    <div id="translate-container">
+        <h1>Lugha_Link</h1>
+        <input type="text" id="source-text" placeholder="Type or speak your text">
+        <button id = "speech-button">Click to Speak</button>
+        <div id="microphone-status"></div>
+        <button id="translate-button">Translate</button>
+        <button id="speak-button">Speak Translation</button>
+       
+        <div id="results-container">
+            <textarea id="translated-text" placeholder="🌟 Translated text"></textarea>
+        </div>
+        <div id="rolling-text-container">
+            <div id="rolling-text">Translate with ease.</div>
+        </div>
+    </div>
+    <script>
+        // Get the source-text input element, translate-button button, and voice-input button
+const sourceTextInput = document.getElementById('source-text');
+const translateButton = document.getElementById('translate-button');
+const speechbutton = document.getElementById('speech-button');
+const speakbutton = document.getElementById('speak-button');
+
+// Add a click event listener to the translate-button button
+translateButton.addEventListener('click', () => {
+  const sourceText = sourceTextInput.value;
+
+  fetch('/translate', {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json'
+    },
+    body: JSON.stringify({ sourceText: sourceText })
+  })
+  .then(response => response.json())
+  .then(data => {
+    const translatedText = data.translatedText;
+    const translatedTextInput = document.getElementById('translated-text');
+    translatedTextInput.value = translatedText;
+  })
+  .catch(error => {
+    console.error('Error:', error);
+  });
+});
+
+// Add a click event listener to the voice-input-button button
+speechbutton.addEventListener('click', () => {
+    const microphoneStatusElement = document.getElementById('microphone-status');
+  microphoneStatusElement.textContent = 'Microphone is active... Listening...';
+  // Send a POST request to the Flask backend to handle voice input
+  fetch('/voice-input', {
+    method: 'POST'
+  })
+  .then(response => response.json())
+  .then(data => {
+    // Get the recognized text from the response
+    const recognizedText = data.recognizedText;
+
+    // Set the recognized text in the source-text input element
+    sourceTextInput.value = recognizedText;
+
+     // Clear the microphone status
+     microphoneStatusElement.textContent = '';
+  })
+  .catch(error => {
+    console.error('Error:', error);
+
+    microphoneStatusElement.textContent = '';
+  });
+});
+
+//Speak output action listener
+speakbutton.addEventListener('click', () => {
+  const translatedText = document.getElementById('translated-text').value;
+  if (translatedText) {
+    fetch('/speak', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify({ text: translatedText })
+    })
+    .catch(error => {
+      console.error('Error:', error);
+    });
+  }
+});
+
+
+        // Array of rolling text phrases
+        const rollingTextPhrases = [
+            "Translate with ease.",
+            "Discover Swahili.",
+            "Speak and understand.",
+            "Language made simple."
+        ];
+
+        let rollingTextIndex = 0;
+        const rollingTextElement = document.getElementById('rolling-text');
+
+        function changeRollingText() {
+            rollingTextElement.textContent = rollingTextPhrases[rollingTextIndex];
+            rollingTextIndex = (rollingTextIndex + 1) % rollingTextPhrases.length;
+        }
+
+        // Call the changeRollingText function every 4 seconds
+        setInterval(changeRollingText, 4000);
+
+        document.getElementById('translate-button').addEventListener('click', function() {
+            const sourceText = document.getElementById('source-text').value;
+            const translatedText = translateText(sourceText);
+            document.getElementById('translated-text').value = translatedText;
+        });
+
+        // Simulated microphone input (replace with a real voice recognition system)
+        document.getElementById('microphone-icon').addEventListener('click', function() {
+            // Simulate voice input recognition
+            const voiceInput = prompt('🎙 Speak the text:');
+            document.getElementById('source-text').value = voiceInput;
+        });
+    </script>
+</body>
+</html>
